@@ -4,7 +4,7 @@
 using namespace std;
 
 // making the board in center
-const string PAD = "          ";
+const string PAD = "                                             ";
 
 #define BG_LIGHT  "\033[48;2;240;217;181m"       // cream
 #define BG_DARK   "\033[48;2;181;136;99m"    // brown
