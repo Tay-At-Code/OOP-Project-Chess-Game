@@ -84,19 +84,41 @@ int main() {
         int boardFR = 8 - fr, boardFC = fc - 'a';
         int boardTR = 8 - tr, boardTC = tc - 'a';
 
-        if (!board.movePiece(boardFR, boardFC, boardTR, boardTC)) {
-            message = "Invalid move! Try again.";
+        //capture name 
+        Piece* moving = board.getPiece(boardFR, boardFC);
+        string pieceName = moving ? moving->toString() : "";
+
+        if (!board.movePiece(boardFR, boardFC, boardTR, boardTC))
+        {
+            message = lastMoved + (lastMoved.empty() ? "" : "\n" + PAD + "  ")
+                + "Invalid move! Try again.";
             continue;
         }
 
-        // Check game state after the move
+        //"Last moved:"
+        lastMoved = "Last moved: " + pieceName + " to " + to;
+
         char   next = board.getTurn();
         string player = (next == 'W') ? "White" : "Black";
 
-        if (board.isCheckmate(next)) { displayBoard(board, "CHECKMATE!  " + player + " loses!"); break; }
-        else if (board.isStalemate(next)) { displayBoard(board, "STALEMATE!  It's a draw.");            break; }
-        else if (board.isInCheck(next))     message = "CHECK!  " + player + "'s turn.  Enter move:";
-        else                                message = player + "'s turn.  Enter move (e.g. e2 e4):";
+        if (board.isCheckmate(next))
+        {
+            displayBoard(board, lastMoved + "\n" + PAD + "  CHECKMATE! " + player + " loses!");
+            break;
+        }
+        else if (board.isStalemate(next))
+        {
+            displayBoard(board, lastMoved + "\n" + PAD + "  STALEMATE! It's a draw.");
+            break;
+        }
+        else if (board.isInCheck(next))
+        {
+            message = lastMoved + "\n" + PAD + "  CHECK! " + player + "'s turn. Enter move:";
+        }
+        else
+        {
+            message = lastMoved + "\n" + PAD + "  " + player + "'s turn. Enter move (e.g. e2 e4):";
+        }
     }
 
     return 0;
