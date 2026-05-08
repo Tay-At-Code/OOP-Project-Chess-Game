@@ -16,6 +16,14 @@ bool MoveValidator::isStraightClear(int fr, int fc, int tr, int tc, Piece* b[8][
     return true;
 }
 
+bool MoveValidator::isDiagonalClear(int fr, int fc, int tr, int tc, Piece* b[8][8]) {
+    int rs = (tr > fr) ? 1 : -1;
+    int cs = (tc > fc) ? 1 : -1;
+    for (int r = fr + rs, c = fc + cs; r != tr; r += rs, c += cs)
+        if (b[r][c]) return false;
+    return true;
+}
+
 Piece::Piece(char color, char symbol) : color(color), symbol(symbol) {}
 char Piece::getColor()  const { return color; }
 char Piece::getSymbol() const { return symbol; }
