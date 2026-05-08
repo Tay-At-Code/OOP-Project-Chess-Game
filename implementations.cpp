@@ -2,6 +2,20 @@
 
 static int absVal(int x) { return x < 0 ? -x : x; }
 
+bool MoveValidator::isStraightClear(int fr, int fc, int tr, int tc, Piece* b[8][8]) {
+    if (fr == tr) {
+        int step = (tc > fc) ? 1 : -1;
+        for (int c = fc + step; c != tc; c += step)
+            if (b[fr][c]) return false;
+    }
+    else {
+        int step = (tr > fr) ? 1 : -1;
+        for (int r = fr + step; r != tr; r += step)
+            if (b[r][fc]) return false;
+    }
+    return true;
+}
+
 Piece::Piece(char color, char symbol) : color(color), symbol(symbol) {}
 char Piece::getColor()  const { return color; }
 char Piece::getSymbol() const { return symbol; }
@@ -20,8 +34,7 @@ Rook::Rook(char c) : Piece(c, c == 'W' ? 'R' : 'r') {}
 bool Rook::isValidMove(int fr, int fc, int tr, int tc, Piece* b[8][8]) {
     if (fr != tr && fc != tc) return false;
     if (b[tr][tc] && b[tr][tc]->getColor() == color) return false;
-    if (fr == tr) { int s = tc > fc ? 1 : -1; for (int c = fc + s; c != tc; c += s) if (b[fr][c]) return false; }
-    else { int s = tr > fr ? 1 : -1; for (int r = fr + s; r != tr; r += s) if (b[r][fc]) return false; }
+    if (!MoveValidator::isStraightClear(fr, fc, tr, tc, b)) return false;
     return true;
 }
 
@@ -38,8 +51,7 @@ bool Bishop::isValidMove(int fr, int fc, int tr, int tc, Piece* b[8][8]) {
     int dr = absVal(tr - fr), dc = absVal(tc - fc);
     if (dr != dc || dr == 0) return false;
     if (b[tr][tc] && b[tr][tc]->getColor() == color) return false;
-    int rs = tr > fr ? 1 : -1, cs = tc > fc ? 1 : -1;
-    for (int r = fr + rs, c = fc + cs; r != tr; r += rs, c += cs) if (b[r][c]) return false;
+    if (!MoveValidator::isDiagonalClear(fr, fc, tr, tc, b)) return false;
     return true;
 }
 
@@ -48,14 +60,12 @@ bool Queen::isValidMove(int fr, int fc, int tr, int tc, Piece* b[8][8]) {
     int dr = absVal(tr - fr), dc = absVal(tc - fc);
     if (fr == tr || fc == tc) {
         if (b[tr][tc] && b[tr][tc]->getColor() == color) return false;
-        if (fr == tr) { int s = tc > fc ? 1 : -1; for (int c = fc + s; c != tc; c += s) if (b[fr][c]) return false; }
-        else { int s = tr > fr ? 1 : -1; for (int r = fr + s; r != tr; r += s) if (b[r][fc]) return false; }
+        if (!MoveValidator::isStraightClear(fr, fc, tr, tc, b)) return false;
         return true;
     }
     if (dr == dc) {
         if (b[tr][tc] && b[tr][tc]->getColor() == color) return false;
-        int rs = tr > fr ? 1 : -1, cs = tc > fc ? 1 : -1;
-        for (int r = fr + rs, c = fc + cs; r != tr; r += rs, c += cs) if (b[r][c]) return false;
+        if (!MoveValidator::isDiagonalClear(fr, fc, tr, tc, b)) return false;
         return true;
     }
     return false;
