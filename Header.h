@@ -3,6 +3,14 @@
 #include <string>
 using namespace std;
 
+class Piece;
+
+class MoveValidator
+{
+public:
+    static bool isStraightClear(int fr, int fc, int tr, int tc, Piece* b[8][8]);
+    static bool isDiagonalClear(int fr, int fc, int tr, int tc, Piece* b[8][8]);
+};
 class Piece {
 protected:
     char color, symbol;
