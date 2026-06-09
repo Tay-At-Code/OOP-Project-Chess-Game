@@ -5,16 +5,16 @@
 using namespace std;
 
 // making the board in center
-const string PAD = "          ";
+const string PAD = "                                            ";
 
-#define BG_LIGHT  "\033[48;2;240;217;181m"       // cream
-#define BG_DARK   "\033[48;2;181;136;99m"    // brown
+#define BG_LIGHT  "\033[48;2;240;217;181m"    // cream
+#define BG_DARK   "\033[48;2;181;136;99m"     // brown
 #define TXT_WHITE "\033[1;97m"                // bold bright white,White pieces
 #define TXT_BLACK "\033[1;30m"                // bold dark,Black pieces
 #define RESET     "\033[0m"
 
 void displayBoard(Board& board, const string& message) {
-    system("cls");   // clear screen before every redraw
+    system("cls");   // clear screen 
 
     cout << "\n\n";
     cout << PAD << "  White: K Q R B N P     Black: k q r b n p\n\n";
@@ -31,7 +31,7 @@ void displayBoard(Board& board, const string& message) {
 
             Piece* p = board.getPiece(r, c);
             if (p) {
-                // Colour the piece letter based on its side
+                // Colour the piece letter
                 cout << (p->getColor() == 'W' ? TXT_WHITE : TXT_BLACK);
                 cout << " " << p->getSymbol() << " ";
             }
@@ -73,7 +73,6 @@ int main() {
             string from, to;
             cout << PAD << "  >> ";
 
-            // cin can fail if the input stream closes (e.g. piped input ends)
             if (!(cin >> from)) throw runtime_error("Input stream closed unexpectedly.");
 
             if (from == "quit") { cout << "\n  Game ended.\n"; break; }
@@ -114,20 +113,20 @@ int main() {
             else                                 message = player + "'s turn.  Enter move (e.g. e2 e4):";
         }
 
-        // Catches things like bad_alloc during movePiece (e.g. pawn promotion creates new Queen)
+        // Catches things like bad_alloc during movePiece
         catch (const bad_alloc& e) {
             cerr << "\n  Memory error during game: " << e.what() << "\n";
             delete boardPtr;
             return 1;
         }
 
-        // Catches our own runtime_error throws (stream failure)
+        // Catches our own runtime_error throws
         catch (const runtime_error& e) {
             cerr << "\n  Runtime error: " << e.what() << "\n";
             break;
         }
 
-        // Safety net — catches anything else unexpected
+        // catches anything else
         catch (const exception& e) {
             cerr << "\n  Unexpected error: " << e.what() << "\n";
             break;
